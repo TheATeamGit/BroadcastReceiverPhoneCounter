@@ -14,42 +14,42 @@ import android.widget.Toast;
 
 public class MyReceiver extends BroadcastReceiver {
     String phoneNumber;
-    private static final String ACCESS_FILE="Accessability";
-    private static String PHONE_NUMBER;
+    /*private static final String ACCESS_FILE="Accessability";
     private static final String PASS_WORD="pass";
     private SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    Context context;
+    Context context;*/
+    private static String PHONE_NUMBER;
     int anInt;
     public MyReceiver() {
 
 
     }
 
+
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        SharedPreferenceMy myshp = new SharedPreferenceMy(context);
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
 
-        this.context=context;
-        sharedPreferences=this.context.getSharedPreferences(ACCESS_FILE,Context.MODE_PRIVATE);
-        editor=sharedPreferences.edit();
+
         if(intent.getAction().equals (Intent. ACTION_NEW_OUTGOING_CALL))
         {
             PHONE_NUMBER = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
 
-            if(!sharedPreferences.contains("PHONE_NUMBER"))
+            if(myshp.pop(PHONE_NUMBER)==-1)
             {
                 Log.e("This is null",PHONE_NUMBER);
                 //Toast.makeText(context,"This is null",Toast.LENGTH_LONG);
 
-                editor.putInt(PHONE_NUMBER,0);
-                editor.commit();
+                myshp.push(PHONE_NUMBER,0);
             }
 
-            anInt = sharedPreferences.getInt(PHONE_NUMBER,-1);
+            anInt = myshp.pop(PHONE_NUMBER);
             anInt=anInt+1;
-            editor.putInt(PHONE_NUMBER,anInt);
+            myshp.push(PHONE_NUMBER,anInt);
 
             PHONE_NUMBER= PHONE_NUMBER+"("+anInt+")";
             Notification notification = new Notification.Builder(context)
